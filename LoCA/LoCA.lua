@@ -165,6 +165,16 @@ function addon:OnInitialize()
   addon.db.RegisterCallback(addon, "OnProfileChanged", UpdateProfileRefs)
   addon.db.RegisterCallback(addon, "OnProfileCopied", UpdateProfileRefs)
   addon.db.RegisterCallback(addon, "OnProfileReset", UpdateProfileRefs)
+
+  -- Register Slash Command
+  SLASH_LOCA1 = "/loca"
+  SlashCmdList["LOCA"] = function(msg)
+    -- Open the options panel
+    -- In modern WoW 'InterfaceOptionsFrame_OpenToCategory' might be deprecated for 'Settings.OpenToCategory', 
+    -- but AceConfigDialog usually handles the blizz options integration.
+    -- We can ask AceConfigDialog to open it.
+    LibStub("AceConfigDialog-3.0"):Open(addonName)
+  end
 end
 
 function addon:OnEvent(event, ...)
