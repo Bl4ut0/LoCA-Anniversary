@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 30403
 ## Title: Loss of Control Alerter
 ## Notes: Shows alerts on loss of control debuffs
 ## Version: 1.21

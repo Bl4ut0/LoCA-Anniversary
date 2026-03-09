@@ -1,4 +1,5 @@
 local addonName, addon = ...
+local L = LibStub("AceLocale-3.0"):GetLocale("LossOfControlAlerter")
 local locaDebuffs = addon.CreateDebuffs()
 
 local container
@@ -22,13 +23,13 @@ local LOC_TYPE_MAP = {
 
 locaDebuffs.options = {
   type = "group",
-  name = "Debuffs",
+  name = L["Debuffs"],
   args = {
     lock = {
       order = 1,
-      name = function() if isLocked then return "Unlock" else return "Lock" end end,
+      name = function() if isLocked then return L["Unlock"] else return L["Lock"] end end,
       type = "execute",
-      desc = "Unlock/Lock the alerts for movement",
+      desc = L["Unlock/Lock the alerts for movement"],
       func = function()
         if isLocked then
           locaDebuffs:Unlock()
@@ -40,9 +41,9 @@ locaDebuffs.options = {
     },
     test = {
       order = 2,
-      name = "Test",
+      name = L["Test"],
       type = "execute",
-      desc = "Shows a fake alert for testing the look",
+      desc = L["Shows a fake alert for testing the look"],
       func = function()
         locaDebuffs:RunTest()
       end,
@@ -51,11 +52,11 @@ locaDebuffs.options = {
     break1 = {
       order = 3,
       type = "header",
-      name = "Visuals"
+      name = L["Visuals"]
     },
     scale = {
       order = 4,
-      name = "Scale",
+      name = L["Scale"],
       type = "range",
       min = 0.1,
       max = 3,
@@ -66,7 +67,7 @@ locaDebuffs.options = {
     },
     alpha = {
       order = 5,
-      name = "Alpha",
+      name = L["Alpha"],
       type = "range",
       min = 0.1,
       max = 1,
@@ -83,7 +84,7 @@ locaDebuffs.options = {
     showRedLines = {
       order = 7,
       type = "toggle",
-      name = "Show Red Lines",
+      name = L["Show Red Lines"],
       width = "full",
       get = function(info) return locaDebuffs.db.showRedLines end,
       set = function(info, val) locaDebuffs:SetShowRedLines(val) end,
@@ -91,19 +92,19 @@ locaDebuffs.options = {
     showBackground = {
       order = 8,
       type = "toggle",
-      name = "Show Background",
+      name = L["Show Background"],
       width = "full",
       get = function(info) return locaDebuffs.db.showBackground end,
       set = function(info, val) locaDebuffs:SetShowBackground(val) end,
     },
     style = {
       order = 9,
-      name = "Style",
+      name = L["Style"],
       type = "select",
       style = "dropdown",
       values = {
-        box = "Box (New)",
-        texture = "Default (Original)"
+        box = L["Box (New)"],
+        texture = L["Default (Original)"]
       },
       get = function(info) return locaDebuffs.db.style end,
       set = function(info, val) locaDebuffs.db.style = val; locaDebuffs:UpdateContainer() end
@@ -111,7 +112,7 @@ locaDebuffs.options = {
     showSecondsLabel = {
       order = 10,
       type = "toggle",
-      name = "Show Seconds Label",
+      name = L["Show Seconds Label"],
       width = "full",
       get = function(info) return locaDebuffs.db.showSecondsLabel end,
       set = function(info, val) locaDebuffs:SetShowSecondsLabel(val) end,
@@ -119,18 +120,18 @@ locaDebuffs.options = {
     debuffCategories = {
       order = 11,
       type = "group",
-      name = "Tracked Categories",
+      name = L["Tracked Categories"],
       childGroups = "select",
       args = {
         header = {
           order = 1,
           type = "header",
-          name = "Tracked Categories"
+          name = L["Tracked Categories"]
         },
         description = {
           order = 2,
           type = "description",
-          name = "Enable/disable whole categories from being showed"
+          name = L["Enable/disable whole categories from being showed"]
         },
         break1 = {
           order = 3,
@@ -140,37 +141,83 @@ locaDebuffs.options = {
         root = {
           order = 4,
           type = "toggle",
-          name = "Movement/Root",
+          name = L["Movement/Root"],
           get = function(info) return locaDebuffs.db.types[1].active end,
           set = function(info, val) locaDebuffs.db.types[1].active = val end
         },
         silence = {
           order = 5,
           type = "toggle",
-          name = "Silence/Disarm",
+          name = L["Silence/Disarm"],
           get = function(info) return locaDebuffs.db.types[2].active end,
           set = function(info, val) locaDebuffs.db.types[2].active = val end
         },
         stun = {
           order = 6,
           type = "toggle",
-          name = "Stun",
+          name = L["Stun"],
           get = function(info) return locaDebuffs.db.types[3].active end,
           set = function(info, val) locaDebuffs.db.types[3].active = val end
         },
         full = {
           order = 7,
           type = "toggle",
-          name = "Full",
+          name = L["Full"],
           get = function(info) return locaDebuffs.db.types[4].active end,
           set = function(info, val) locaDebuffs.db.types[4].active = val end
         }
       }
     },
-    debuffList = {
+    addCustomDebuff = {
       order = 11,
       type = "group",
-      name = "Tracked Debuffs",
+      name = L["Add Custom Spell"],
+      hidden = function() return locaDebuffs.db.mode ~= "custom" end,
+      disabled = function() return locaDebuffs.db.mode ~= "custom" end,
+      args = {
+        header = {
+          order = 1,
+          type = "header",
+          name = L["Add Missing Spell"],
+        },
+        desc = {
+          order = 2,
+          type = "description",
+          name = L["If a spell is missing from the default tracker (such as specific stuns or roots in Classic/TBC), enter the exact numeric Spell ID found on websites like Wowhead.\n\nType the Spell ID below, pick a category, and click Add."],
+        },
+        spellIdInput = {
+          order = 3,
+          type = "input",
+          name = L["Spell ID:"],
+          desc = L["Enter a numeric Spell ID (e.g., 5530 for Mace Stun)."],
+          get = function(info) return locaDebuffs.tempInputSpellId or "" end,
+          set = function(info, val) locaDebuffs.tempInputSpellId = val end,
+        },
+        categoryDropdown = {
+          order = 4,
+          type = "select",
+          name = L["Loss of Control Type"],
+          values = {
+            [1] = L["Movement / Root"],
+            [2] = L["Silence / Disarm"],
+            [3] = L["Stun"],
+            [4] = L["Full (Fear/Polymorph/Etc)"]
+          },
+          get = function(info) return locaDebuffs.tempInputCategory or 3 end,
+          set = function(info, val) locaDebuffs.tempInputCategory = val end,
+        },
+        addButton = {
+          order = 5,
+          type = "execute",
+          name = L["Add Spell"],
+          func = function() locaDebuffs:AddCustomSpell() end,
+        }
+      }
+    },
+    debuffList = {
+      order = 12,
+      type = "group",
+      name = L["Tracked Debuffs"],
       childGroups = "select",
       hidden = function() return locaDebuffs.db.mode ~= "custom" end,
       disabled = function() return locaDebuffs.db.mode ~= "custom" end,
@@ -391,24 +438,44 @@ function locaDebuffs:OnInitialize(db)
 
   locaDebuffs:CreateContainerFrame()
 
-  local staleDebuffs = {}
+  local defaultDebuffs = addon.defaultSettings.profile.debuffs.debuffsTable
 
-  for index, debuff in ipairs(locaDebuffs.db.debuffsTable) do
-    local name, _, spellicon = GetSpellInfo(debuff.spellId)
-    debuff.name = name
-    debuff.icon = spellicon
-
-    if name then
-      initializedDebuffs[name] = debuff
-    else
-      table.insert(staleDebuffs, index)
+  -- Ensure any default debuffs missing from the user's DB are added
+  local userDebuffIds = {}
+  for k, debuff in pairs(locaDebuffs.db.debuffsTable) do
+    if type(k) == "number" and type(debuff) == "table" and debuff.spellId then
+      userDebuffIds[debuff.spellId] = true
     end
   end
 
-  -- remove any old debuff configuration, that is unusable
-  for _, indexToRemove in ipairs(staleDebuffs) do
-    locaDebuffs.db.debuffsTable[indexToRemove] = nil
+  for _, defaultDebuff in ipairs(defaultDebuffs) do
+    if not userDebuffIds[defaultDebuff.spellId] then
+      table.insert(locaDebuffs.db.debuffsTable, {
+        spellId = defaultDebuff.spellId,
+        category = defaultDebuff.category,
+        weight = defaultDebuff.weight,
+        active = defaultDebuff.active,
+        type = defaultDebuff.type
+      })
+    end
   end
+
+  -- Pack the array safely without holes and filter out invalid spells
+  local validDebuffs = {}
+  for k, debuff in pairs(locaDebuffs.db.debuffsTable) do
+    if type(k) == "number" and type(debuff) == "table" then
+      local name, _, spellicon = GetSpellInfo(debuff.spellId)
+      if name then
+        debuff.name = name
+        debuff.icon = spellicon
+        initializedDebuffs[name] = debuff
+        table.insert(validDebuffs, debuff)
+      end
+    end
+  end
+
+  -- Replace the db table completely with our cleaned, sequential array
+  locaDebuffs.db.debuffsTable = validDebuffs
 
   iconFrame = locaDebuffs:CreateIcon()
 
@@ -701,20 +768,20 @@ function locaDebuffs:CreateDebuffUIList()
         enable = {
           order = 2,
           type = "toggle",
-          name = "Enabled",
+          name = L["Enabled"],
           get = function(info) return debuff.active end,
           set = function(info, val) debuff.active = val locaDebuffs:NotifyUpdate() end,
         },
         weight = {
           order = 3,
           type = "select",
-          name = "Weight",
-          desc = "Higher weighted alerts overwrite lower ones",
+          name = L["Weight"],
+          desc = L["Higher weighted alerts overwrite lower ones"],
           values = {
-            [1] = "1 - Movement/Root",
-            [2] = "2 - Disarm/Silence",
-            [3] = "3 - Stun",
-            [4] = "4 - Full",
+            [1] = L["1 - Movement/Root"],
+            [2] = L["2 - Disarm/Silence"],
+            [3] = L["3 - Stun"],
+            [4] = L["4 - Full"],
           },
           get = function(info) return debuff.weight end,
           set = function(info, val) debuff.weight = val; locaDebuffs:NotifyUpdate() end
@@ -722,10 +789,99 @@ function locaDebuffs:CreateDebuffUIList()
       }
     }
 
+    -- Inject a Remove button dynamically if it was a user-added custom spell
+    if debuff.isCustomUserAdded then
+      debuffUI.args.removeButton = {
+        order = 4,
+        type = "execute",
+        name = L["Remove"],
+        confirm = true,
+        confirmText = L["Are you sure you want to stop tracking this spell?"],
+        func = function() locaDebuffs:RemoveCustomSpell(debuff.spellId) end
+      }
+    end
+
     orderNumber = orderNumber + 1
 
     debuffListArgs[debuff.name] = debuffUI
   end
 
   return debuffListArgs
+end
+
+function locaDebuffs:AddCustomSpell()
+  local input = locaDebuffs.tempInputSpellId
+  if not input or input == "" then return end
+
+  local spellId = tonumber(input)
+  if not spellId then
+    print("|cffff0000LoCA:|r Invalid Spell ID. Please enter numbers only.")
+    return
+  end
+
+  local categoryValue = locaDebuffs.tempInputCategory or 3
+  local categoryNames = { "Snared", "Silenced/Disarmed", "Stunned", "Incapacitated/Feared/Etc" }
+  local categoryWeights = { 1, 2, 3, 4 }
+
+  -- Avoid duplicates
+  for _, debuff in pairs(locaDebuffs.db.debuffsTable) do
+    if debuff.spellId == spellId then
+      print("|cffff0000LoCA:|r Spell ID " .. spellId .. " is already being tracked!")
+      return
+    end
+  end
+
+  local name, _, spellicon = GetSpellInfo(spellId)
+  if not name then
+    print("|cffff0000LoCA:|r Could not find spell info for ID " .. spellId .. ". It may not exist in this version of WoW.")
+    return
+  end
+
+  local newDebuff = {
+    spellId = spellId,
+    name = name,
+    icon = spellicon,
+    category = categoryNames[categoryValue],
+    weight = categoryWeights[categoryValue],
+    type = categoryValue,
+    active = true,
+    isCustomUserAdded = true -- Flag to allow easy removal
+  }
+
+  table.insert(locaDebuffs.db.debuffsTable, newDebuff)
+  initializedDebuffs[name] = newDebuff
+
+  -- Clear temp data and rebuild list
+  locaDebuffs.tempInputSpellId = ""
+  locaDebuffs.options.args.debuffList.args = locaDebuffs:CreateDebuffUIList()
+  
+  -- Force AceConfig to refresh the panel if it's open
+  LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+  
+  print("|cff00ff00LoCA:|r Added " .. name .. " (" .. spellId .. ") to the tracker!")
+  locaDebuffs:NotifyUpdate()
+end
+
+function locaDebuffs:RemoveCustomSpell(spellId)
+  local indexToRemove
+  local spellName = "Unknown"
+
+  for index, debuff in ipairs(locaDebuffs.db.debuffsTable) do
+    if debuff.spellId == spellId then
+      indexToRemove = index
+      spellName = debuff.name
+      break
+    end
+  end
+
+  if indexToRemove then
+    table.remove(locaDebuffs.db.debuffsTable, indexToRemove)
+    initializedDebuffs[spellName] = nil
+    
+    locaDebuffs.options.args.debuffList.args = locaDebuffs:CreateDebuffUIList()
+    LibStub("AceConfigRegistry-3.0"):NotifyChange(addonName)
+    
+    print("|cffffff00LoCA:|r Removed " .. spellName .. " from tracking.")
+    locaDebuffs:NotifyUpdate()
+  end
 end

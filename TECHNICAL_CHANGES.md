@@ -83,3 +83,24 @@ To address visual artifacts and allow for cleaner UI integration, a new **Style 
 **File:** `LoCA_TBC.toc`
 - Created specific TOC for Interface **20504** (TBC Anniversary).
 - **Default Mode:** Forced logic in `OnInitialize` to default the addon to **"Custom"** mode on Classic clients, preventing the "Retail" mode (which relies on `LOSS_OF_CONTROL_ADDED` events not present in Classic) from causing errors.
+
+---
+
+## Technical Bug Fixes & User Input Enhancements
+
+### 1. `ipairs` Array Destruction Fix (Classic Engine)
+**File:** `Modules/Debuffs.lua`
+
+In legacy expansions (like Classic/TBC), spells from newer expansions included in the addon’s defaults table (e.g., Cataclysm spells) naturally failed the `GetSpellInfo(spellId)` lookup.
+Previously, the addon removed invalid spells by setting their index in the tracking array to `nil`. In Lua, removing indices this way creates a "hole" in the array. Since the addon iterated across the debuffs using `ipairs`, checking would immediately halt at the first hole, abandoning all subsequent default spells and resulting in **missing states/categories** (e.g. tracking only 1 out of 4 effect types).
+The array map generation was rewritten to securely pack validated spells continuously via `table.insert()`, ensuring 100% stable tracking execution on all client patches.
+
+### 2. Dynamic AceConfig "Custom Spell" Injection
+**File:** `Modules/Debuffs.lua`
+
+Older WoW clients lack the modern `LOSS_OF_CONTROL_ADDED` hook, so they rely on a hardcoded list of `spellId` numbers to detect CC.
+To prevent users from having to repeatedly edit `LoCA.lua` when they discover untracked spells, a dynamic user-input interface was built into the `AceConfig` generated panel:
+- `tempInputSpellId` & `tempInputCategory`: Temporarily stores typed inputs (Spell IDs and weight types) before validation.
+- Validation validates that the Spell ID actually maps to a real spell using the game engine before successfully binding.
+- New entries flag `isCustomUserAdded = true`, signaling the UI list generator (`CreateDebuffUIList()`) to dynamically inject a **Remove (Delete)** `execute` button adjacent to that spell in the interface.
+- Modified lists are packed into `AceDB-3.0` and force-refreshed instantly via `AceConfigRegistry-3.0:NotifyChange(addonName)`.

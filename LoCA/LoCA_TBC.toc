@@ -1,12 +1,14 @@
-## Interface: 20504
+## Interface: 20505
 ## Title: Loss of Control Alerter
 ## Notes: Shows alerts on loss of control debuffs
-## Version: 1.13-TBC
+## Version: 1.21
 ## Author: Rdmx
 ## DefaultState: Enabled
 ## SavedVariables: LoCADB
 
 embeds.xml
+
+Locales\enUS.lua
 
 LoCA.lua
 Modules\Debuffs.lua

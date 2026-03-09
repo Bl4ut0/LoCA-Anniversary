@@ -27,6 +27,18 @@ This version has been specifically updated for the **TBC Anniversary (2.5.5)** c
 *   **Crash Fixes**: Patched `C_AddOns` and `C_Spell` namespace changes to prevent Lua errors.
 *   **Visual Options**: Added a configuration toggle for frame styling.
 
+Provides an audible and visual alert when you acquire a loss of control debuff and also creates a central UI icon with a countdown timer to denote when the CC effect will expire.
+
+## Supported Game Versions
+Loss of Control Alerter is designed to function seamlessly across almost all versions of World of Warcraft. Including the following:
+- **Retail / Mainline** (`11.0.7`)
+- **Cataclysm Classic** (`4.4.0`)
+- **Wrath of the Lich King Classic** (`3.4.3`)
+- **The Burning Crusade (Anniversary)** (`2.5.5`)
+- **Classic Era / SoD / Hardcore** (`1.15.7`)
+
+The codebase automatically utilizes modern C_LossOfControl events if available, and gracefully falls back to combat log parsing for older Classic clients.
+
 ## Installation
 
 1.  Download the latest release.
@@ -40,6 +52,7 @@ Type `/loca` or go to **Interface Options -> AddOns -> Loss of Control Alerter**
 *   **Unlock**: Move the alert frame anywhere on your screen.
 *   **Test**: Preview the alert to adjust scale and positioning.
 *   **Style**: Switch between "Box" and "Default" visuals.
+*   **Add Custom Spell**: Dynamically add unsupported or missing abilities (such as `5530` Mace Stun) by inputting their Spell ID directly in the game, categorized exactly how you want. These immediately save to your profile and can be removed later!
 
 ## Credits
 

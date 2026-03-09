@@ -1,12 +1,14 @@
 ## Interface: 40400
 ## Title: Loss of Control Alerter
 ## Notes: Shows alerts on loss of control debuffs
-## Version: 1.14
+## Version: 1.21
 ## Author: Rdmx
 ## DefaultState: Enabled
 ## SavedVariables: LoCADB
 
 embeds.xml
+
+Locales\enUS.lua
 
 LoCA.lua
 Modules\Debuffs.lua

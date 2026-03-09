@@ -1,4 +1,5 @@
 local addonName, addon = ...
+local L = LibStub("AceLocale-3.0"):GetLocale("LossOfControlAlerter")
 
 -- API Shims for TBC Anniversary / Modern Engine
 if not GetAddOnMetadata and C_AddOns and C_AddOns.GetAddOnMetadata then
@@ -57,6 +58,8 @@ addon.defaultSettings = {
         { spellId = 39077, category = "Stunned", weight = 3, active = true, type = 3 },  --[[ Hammer of Justice --]]
         { spellId = 19577, category = "Stunned", weight = 3, active = true, type = 3 },  --[[ Intimidation --]]
         { spellId = 15269, category = "Stunned", weight = 3, active = true, type = 3 },  --[[ Blackout --]]
+        { spellId = 5530, category = "Stunned", weight = 3, active = true, type = 3 },   --[[ Mace Stun Effect --]]
+        { spellId = 34510, category = "Stunned", weight = 3, active = true, type = 3 },  --[[ Stormherald Mace Stun --]]
 
         { spellId = 22570, category = "Incapacitated", weight = 4, active = true, type = 4 }, --[[ Maim --]]
         { spellId = 20066, category = "Incapacitated", weight = 4, active = true, type = 4 }, --[[ Repentence --]]
@@ -85,18 +88,16 @@ addon.options = {
     title = {
       order = 1,
       type = 'description',
-      name = [[The alerts can operate in two modes:
-      - Retail - The alert logic is very close to the standard blizzard alerts.
-      - Custom - This allows you to configure which debuffs you want to alert and with what priority.]],
+      name = L["The alerts can operate in two modes:\n      - Retail - The alert logic is very close to the standard blizzard alerts.\n      - Custom - This allows you to configure which debuffs you want to alert and with what priority."],
     },
     mode = {
       order = 3,
-      name = "Mode",
+      name = L["Mode"],
       type = "select",
       style = "dropdown",
       values = {
-        retail = "Retail",
-        custom = "Custom"
+        retail = L["Retail"],
+        custom = L["Custom"]
       },
       get = function(info) return addon.db.profile.debuffs.mode end,
       set = function(info, val)
@@ -152,7 +153,10 @@ function addon:OnInitialize()
   addon.options.args["debuffs"] = debuffs.options
 
   LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
-  LibStub("AceConfigDialog-3.0"):AddToBlizOptions(addonName, addon.addonTitle)
+  local acd = LibStub("AceConfigDialog-3.0")
+  if acd.AddToBlizOptions then
+    acd:AddToBlizOptions(addonName, addon.addonTitle)
+  end
 
   addon:OnUpdateSettings();
 
@@ -169,11 +173,12 @@ function addon:OnInitialize()
   -- Register Slash Command
   SLASH_LOCA1 = "/loca"
   SlashCmdList["LOCA"] = function(msg)
-    -- Open the options panel
-    -- In modern WoW 'InterfaceOptionsFrame_OpenToCategory' might be deprecated for 'Settings.OpenToCategory', 
-    -- but AceConfigDialog usually handles the blizz options integration.
-    -- We can ask AceConfigDialog to open it.
-    LibStub("AceConfigDialog-3.0"):Open(addonName)
+    local acd = LibStub("AceConfigDialog-3.0", true)
+    if acd and acd.Open then
+      acd:Open(addonName)
+    else
+      print("|cffff0000LoCA:|r Unable to open options. Another addon has loaded a damaged/stripped AceConfigDialog-3.0 library.")
+    end
   end
 end
 
