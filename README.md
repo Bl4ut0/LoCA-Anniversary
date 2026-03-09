@@ -57,6 +57,6 @@ Type `/loca` or go to **Interface Options -> AddOns -> Loss of Control Alerter**
 ## Credits
 
 *   **Original Author**: [Rdmx](https://www.curseforge.com/wow/addons/loca-loss-of-control-alerter-for-tbc-classic)
-*   **Anniversary Port**: Updated by the community to support client v2.5.5.
+*   **Anniversary Port**: Bl4ut0
 
 All creative rights belong to the original author. This repository simply serves to provide compatibility for the Anniversary game client.
