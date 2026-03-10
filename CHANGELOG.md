@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.22] - Base TOC Visibility Fix
+### Fixed
+- **Addon Visibility**: Restored base `LoCA.toc` file to serve as a universal fallback, fixing an issue where the addon was completely invisible on older expansion clients (like private servers), clients running non-latest patch versions, and certain AddOn managers that don't support flavor-specific TOC files.
+
 ## [1.21] - Custom Spells UI & Array Fixes
 ### Added
 - **Localization**: Added full language scaffolding framework (`AceLocale-3.0`). 100% of the UI and Alerts are now ready to be translated (seeking translators on GitHub!).
