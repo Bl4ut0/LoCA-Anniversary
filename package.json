@@ -12,7 +12,8 @@
   "scripts": {
     "validate:lua": "node .tools/check_lua.js",
     "validate:structure": "node .tools/check_addon_structure.js",
-    "test": "npm run validate:lua && npm run validate:structure"
+    "test": "npm run validate:lua && npm run validate:structure",
+    "install:local": "powershell -NoProfile -ExecutionPolicy Bypass -File ./.tools/install_local.ps1 -SourceRoot . -NoConfirm"
   },
   "devDependencies": {
     "luaparse": "^0.3.1"
