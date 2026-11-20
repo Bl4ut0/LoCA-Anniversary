@@ -95,7 +95,9 @@ if (-not ($archiveEntries -contains 'LoCA/LoCA.toc')) {
     throw 'Archive verification failed: LoCA/LoCA.toc missing at archive root.'
 }
 
-$zipHashHex = (Get-FileHash -Path $zipPath -Algorithm SHA256).Hash.ToLowerInvariant()
+$zipBytes = [System.IO.File]::ReadAllBytes($zipPath)
+$zipHashBytes = $sha256.ComputeHash($zipBytes)
+$zipHashHex = ([BitConverter]::ToString($zipHashBytes)).Replace('-', '').ToLowerInvariant()
 
 Set-Content -Path (Join-Path $versionsDir 'SOURCE_COMMIT.txt') -Value $commitSha -Encoding UTF8
 Set-Content -Path (Join-Path $versionsDir 'SOURCE_TREE.txt') -Value ($treeLines -join "`n") -Encoding UTF8
