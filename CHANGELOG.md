@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.30] - 2026-11-20
+### Added
+- **Recent & Quick Filter Tab**: Auto-captures detected LoC spells/debuffs/interrupts during your session with their icon, name, and Spell ID so you can block or group them with one click—no manual Spell ID lookup required.
+- **Per-Spell Blacklist**: Ignore any specific spell in both Retail and Custom modes via the visual Recent list or by Spell ID.
+- **Custom Alert Groups**: Create named groups with independent **Enabled** toggles, **Priority/Weight**, and **Scale Override** (e.g., smaller roots or high-priority PvE mechanics).
+- **Per-Category Scale**: Added a `Category Scale` multiplier slider to each built-in category (`Movement/Root`, `Silence/Disarm`, `Stun`, `Full`).
+- **Non-Blanket Interrupt Lockout Alerts**: Added `COMBAT_LOG_EVENT_UNFILTERED` (`SPELL_INTERRUPT`) tracking in Custom mode so partial/school interrupts display `"<School> Locked"` (e.g., `"Fire Locked"`).
+- **Retail & WoW Forever Support**: Re-added `LoCA_Mainline.toc` (`120005, 120105, 120107`) with `issecretvalue` guards for Midnight, and added `LoCA_Camelot.toc` (`16001`) for WoW Forever.
+
+### Fixed
+- **Disabled Category Filtering**: Fixed `OnDebuffsChanged` so disabled categories (such as `Movement/Root`) are excluded before selecting the highest-priority alert instead of suppressing lower-priority active debuffs.
+- **Options & `/loca` Reliability**: Wrapped `AceConfigDialog:AddToBlizOptions` in `pcall` with an `addonTitle` fallback so `/loca` always registers even if another addon loads an incompatible `AceConfigDialog-3.0`.
+
 ## [1.23] - 2026-11-20
 ### Changed
 - **Expansion & Interface Updates**: Updated TOC interface versions for **Classic Era (`11509`)**, **TBC Anniversary (`20505`, `20506`)**, and added **`LoCA_Mists.toc` (`50504`)** for Mists of Pandaria Classic.

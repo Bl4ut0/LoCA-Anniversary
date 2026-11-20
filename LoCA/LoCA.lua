@@ -21,7 +21,7 @@ if not GetSpellInfo and C_Spell and C_Spell.GetSpellInfo then
   end
 end
 
-addon.addonTitle = GetAddOnMetadata(addonName, "Title")
+addon.addonTitle = GetAddOnMetadata(addonName, "Title") or "Loss of Control Alerter"
 
 addon.defaultSettings = {
   profile = {
@@ -31,11 +31,13 @@ addon.defaultSettings = {
       scale = 1,
       alpha = 1,
       types = {
-        { name = "Movement/Root", active = true, },
-        { name = "Silence/Disarm", active = true, },
-        { name = "Stun", active = true, },
-        { name = "Full", active = true, }
+        { name = "Movement/Root", active = true, scale = 1, },
+        { name = "Silence/Disarm", active = true, scale = 1, },
+        { name = "Stun", active = true, scale = 1, },
+        { name = "Full", active = true, scale = 1, }
       },
+      blacklist = {},
+      customGroups = {},
       showRedLines = true,
       showBackground = true,
       showSecondsLabel = true,
@@ -126,13 +128,15 @@ function addon:OnUpdateSettings()
     addon.eventHandler:RegisterEvent("LOSS_OF_CONTROL_ADDED")
     addon.eventHandler:RegisterEvent("LOSS_OF_CONTROL_UPDATE")
     addon.eventHandler:UnregisterEvent("UNIT_AURA")
+    pcall(addon.eventHandler.UnregisterEvent, addon.eventHandler, "COMBAT_LOG_EVENT_UNFILTERED")
 
-    local data = C_LossOfControl.GetActiveLossOfControlData(1)
+    local data = C_LossOfControl and C_LossOfControl.GetActiveLossOfControlData and C_LossOfControl.GetActiveLossOfControlData(1)
     debuffs:OnLossOfControlUpdate(data)
   else
     addon.eventHandler:UnregisterEvent("LOSS_OF_CONTROL_ADDED")
     addon.eventHandler:UnregisterEvent("LOSS_OF_CONTROL_UPDATE")
     addon.eventHandler:RegisterEvent("UNIT_AURA")
+    pcall(addon.eventHandler.RegisterEvent, addon.eventHandler, "COMBAT_LOG_EVENT_UNFILTERED")
 
     addon:OnAuraEvent("player")
   end
@@ -159,9 +163,9 @@ function addon:OnInitialize()
   addon.options.args["debuffs"] = debuffs.options
 
   LibStub("AceConfig-3.0"):RegisterOptionsTable(addonName, addon.options)
-  local acd = LibStub("AceConfigDialog-3.0")
-  if acd.AddToBlizOptions then
-    acd:AddToBlizOptions(addonName, addon.addonTitle)
+  local acd = LibStub("AceConfigDialog-3.0", true)
+  if acd and acd.AddToBlizOptions then
+    pcall(acd.AddToBlizOptions, acd, addonName, addon.addonTitle)
   end
 
   addon:OnUpdateSettings();
@@ -193,6 +197,10 @@ function addon:OnEvent(event, ...)
     addon:OnInitialize()
   elseif event == "UNIT_AURA" then
     addon:OnAuraEvent(...)
+  elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+    if addon.db.profile.debuffs.mode == "custom" and debuffs.OnCombatLogEvent then
+      debuffs:OnCombatLogEvent()
+    end
   elseif event == "LOSS_OF_CONTROL_ADDED" then
     if addon.db.profile.debuffs.mode == "retail" then
       -- There exists 2 versions paylods for LOSS_OF_CONTROL_ADDED:

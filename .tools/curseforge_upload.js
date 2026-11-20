@@ -32,8 +32,8 @@ async function fetchGameVersionIds(token) {
     throw new Error(`CurseForge game versions query failed (${res.status}): ${await res.text()}`);
   }
   const list = await res.json();
-  // Classic Era, TBC Anniversary, MoP Classic (Retail and Forever excluded intentionally)
-  const wanted = new Set(['1.15.9', '2.5.6', '5.5.4']);
+  // Classic Era, Forever, TBC Anniversary, MoP Classic, Retail
+  const wanted = new Set(['1.15.9', '1.60.1', '2.5.6', '5.5.4', '12.1.7']);
   const ids = list.filter((v) => wanted.has(v.name)).map((v) => v.id);
   if (ids.length > 0) return ids;
 
