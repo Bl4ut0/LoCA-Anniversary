@@ -1,0 +1,74 @@
+name: Release Package & CurseForge Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag (e.g. v1.23)
+        required: true
+      channel:
+        description: Release channel
+        required: true
+        default: stable
+        type: choice
+        options:
+          - stable
+          - beta
+
+permissions:
+  contents: write
+
+jobs:
+  package-and-publish:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Validate Lua syntax and addon structure
+        run: |
+          npm run validate:lua
+          npm run validate:structure
+
+      - name: Resolve version and channel
+        id: meta
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.release.tag_name || github.event.inputs.tag }}"
+          $version = $tag.TrimStart('v', 'V')
+          $isPrerelease = "${{ github.event.release.prerelease }}" -eq "true" -or "$version" -like "*-*"
+          $channel = "${{ github.event.inputs.channel }}"
+          if ([string]::IsNullOrWhiteSpace($channel)) {
+            $channel = if ($isPrerelease) { "beta" } else { "stable" }
+          }
+          "tag=$tag" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          "channel=$channel" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Build immutable release archive
+        run: node .tools/create_release.js build ${{ steps.meta.outputs.channel }} ${{ steps.meta.outputs.version }} --ref ${{ github.sha }}
+
+      - name: Upload GitHub Release Assets
+        if: github.event_name == 'release'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ steps.meta.outputs.tag }}" ".versions/${{ steps.meta.outputs.version }}/LoCA-v${{ steps.meta.outputs.version }}.zip" ".versions/${{ steps.meta.outputs.version }}/LoCA-v${{ steps.meta.outputs.version }}.zip.sha256" --clobber
+
+      - name: Publish to CurseForge
+        env:
+          CURSEFORGE_API_TOKEN: ${{ secrets.CURSEFORGE_API_TOKEN || secrets.CF_UPLOAD_TOKEN }}
+          CURSEFORGE_PROJECT_ID: ${{ secrets.CURSEFORGE_PROJECT_ID }}
+        run: node .tools/curseforge_upload.js --file ".versions/${{ steps.meta.outputs.version }}/LoCA-v${{ steps.meta.outputs.version }}.zip" --version "${{ steps.meta.outputs.version }}" --channel "${{ steps.meta.outputs.channel }}" --notes ".versions/${{ steps.meta.outputs.version }}/CURSEFORGE_RELEASE.md"

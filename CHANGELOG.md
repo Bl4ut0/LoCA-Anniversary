@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.23] - 2026-11-20
+### Changed
+- **Expansion & Interface Updates**: Updated TOC interface versions for **Classic Era (`11509`)**, **TBC Anniversary (`20505`, `20506`)**, and added **`LoCA_Mists.toc` (`50504`)** for Mists of Pandaria Classic.
+- **Retail Removal**: Removed `LoCA_Mainline.toc` (Retail and WoW Forever both have built-in Loss of Control alerts and do not need LoCA).
+- **Release & CI Automation**: Added `.pkgmeta`, `.tools/`, `package.json`, and GitHub Actions workflow (`curseforge-release.yml`) for automated Lua/structure validation, immutable release packaging, and CurseForge deployment.
+
+### Fixed
+- **`C_Spell.GetSpellInfo` Shim**: Updated the `GetSpellInfo` compatibility shim in `LoCA.lua` to unpack the `C_Spell.GetSpellInfo` table into legacy multiple return values on modern Classic/Progression clients where `GetSpellInfo` is absent.
+
 ## [1.22] - Base TOC Visibility Fix
 ### Fixed
 - **Addon Visibility**: Restored base `LoCA.toc` file to serve as a universal fallback, fixing an issue where the addon was completely invisible on older expansion clients (like private servers), clients running non-latest patch versions, and certain AddOn managers that don't support flavor-specific TOC files.

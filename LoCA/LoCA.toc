@@ -1,10 +1,11 @@
-## Interface: 110007
+## Interface: 11509, 20505, 20506, 30403, 40400, 50504
 ## Title: Loss of Control Alerter
 ## Notes: Shows alerts on loss of control debuffs
-## Version: 1.22
+## Version: 1.23
 ## Author: Rdmx
 ## DefaultState: Enabled
 ## SavedVariables: LoCADB
+## X-Curse-Project-ID: 1441462
 
 embeds.xml
 

@@ -10,9 +10,15 @@ if not LoadAddOn and C_AddOns and C_AddOns.LoadAddOn then
   LoadAddOn = C_AddOns.LoadAddOn
 end
 
--- Shim for GetSpellInfo (moved to C_Spell in newer retail, might be mixed in anniversary)
+-- Shim for GetSpellInfo (moved to C_Spell.GetSpellInfo in 11.0+, returns table)
 if not GetSpellInfo and C_Spell and C_Spell.GetSpellInfo then
-  GetSpellInfo = C_Spell.GetSpellInfo
+  GetSpellInfo = function(spellID)
+    if not spellID then return end
+    local info = C_Spell.GetSpellInfo(spellID)
+    if info then
+      return info.name, nil, info.iconID, info.castTime, info.minRange, info.maxRange, info.spellID
+    end
+  end
 end
 
 addon.addonTitle = GetAddOnMetadata(addonName, "Title")

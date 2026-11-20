@@ -1,0 +1,20 @@
+{
+  "name": "loca",
+  "version": "1.23.0",
+  "private": true,
+  "description": "Loss of Control Alerter (LoCA) - Multi-release Classic World of Warcraft crowd control alerter.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bl4ut0/LoCA-Anniversary.git"
+  },
+  "author": "Bl4ut0",
+  "license": "MIT",
+  "scripts": {
+    "validate:lua": "node .tools/check_lua.js",
+    "validate:structure": "node .tools/check_addon_structure.js",
+    "test": "npm run validate:lua && npm run validate:structure"
+  },
+  "devDependencies": {
+    "luaparse": "^0.3.1"
+  }
+}

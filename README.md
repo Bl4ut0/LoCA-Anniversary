@@ -30,12 +30,12 @@ This version has been specifically updated for the **TBC Anniversary (2.5.5)** c
 Provides an audible and visual alert when you acquire a loss of control debuff and also creates a central UI icon with a countdown timer to denote when the CC effect will expire.
 
 ## Supported Game Versions
-Loss of Control Alerter is designed to function seamlessly across almost all versions of World of Warcraft. Including the following:
-- **Retail / Mainline** (`11.0.7`)
+Loss of Control Alerter is designed for Classic and Progression WoW clients (Retail and WoW Forever already include a built-in Loss of Control alert system):
+- **Mists of Pandaria Classic** (`5.5.4`)
 - **Cataclysm Classic** (`4.4.0`)
 - **Wrath of the Lich King Classic** (`3.4.3`)
-- **The Burning Crusade (Anniversary)** (`2.5.5`)
-- **Classic Era / SoD / Hardcore** (`1.15.7`)
+- **The Burning Crusade (Anniversary)** (`2.5.5` / `2.5.6`)
+- **Classic Era / SoD / Hardcore** (`1.15.9`)
 
 The codebase automatically utilizes modern C_LossOfControl events if available, and gracefully falls back to combat log parsing for older Classic clients.
 

@@ -10,3 +10,5 @@ CURSEFORGE_DESCRIPTION.md
 .versions/
 
 release_notes.md
+
+node_modules/
