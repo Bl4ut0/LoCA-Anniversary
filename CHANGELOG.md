@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.31] - 2026-11-20
+### Added
+- **Hide Blizzard Default Frame**: Added a `Hide Blizzard Default Frame` toggle under `/loca` -> `Debuffs` (visible on Retail and WoW Forever where `LossOfControlFrame` exists) to hide Blizzard's built-in Loss of Control frame in a taint-safe way (`SetAlpha(0)` + `EnableMouse(false)`) while keeping `C_LossOfControl` events active for LoCA.
+
 ## [1.30] - 2026-11-20
 ### Added
 - **Recent & Quick Filter Tab**: Auto-captures detected LoC spells/debuffs/interrupts during your session with their icon, name, and Spell ID so you can block or group them with one click—no manual Spell ID lookup required.

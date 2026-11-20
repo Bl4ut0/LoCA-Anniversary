@@ -41,6 +41,7 @@ addon.defaultSettings = {
       showRedLines = true,
       showBackground = true,
       showSecondsLabel = true,
+      hideBlizzardFrame = false,
       style = "box", --[[ box/texture --]]
       debuffsTable = {
         { spellId = 122, category = "Snared", weight = 1, active = true, type = 1 },     --[[ Frost Nova --]]

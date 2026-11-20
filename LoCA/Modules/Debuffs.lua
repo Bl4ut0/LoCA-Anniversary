@@ -145,6 +145,19 @@ locaDebuffs.options = {
       get = function(info) return locaDebuffs.db.showSecondsLabel end,
       set = function(info, val) locaDebuffs:SetShowSecondsLabel(val) end,
     },
+    hideBlizzardFrame = {
+      order = 10.5,
+      type = "toggle",
+      name = L["Hide Blizzard Default Frame"],
+      desc = L["Hides Blizzard's built-in Loss of Control frame (Retail / Forever) so only LoCA is shown."],
+      width = "full",
+      hidden = function() return not _G.LossOfControlFrame end,
+      get = function(info) return locaDebuffs.db.hideBlizzardFrame end,
+      set = function(info, val)
+        locaDebuffs.db.hideBlizzardFrame = val
+        locaDebuffs:UpdateBlizzardFrameVisibility()
+      end,
+    },
     debuffCategories = {
       order = 11,
       type = "group",
@@ -644,10 +657,42 @@ function locaDebuffs:CreateContainerFrame()
   container:SetPoint("CENTER", UIParent, "CENTER")
 end
 
+local blizzardFrameHooked = false
+
+function locaDebuffs:UpdateBlizzardFrameVisibility()
+  local blizzFrame = _G.LossOfControlFrame
+  if not blizzFrame then return end
+
+  if not blizzardFrameHooked and blizzFrame.HookScript then
+    blizzardFrameHooked = true
+    blizzFrame:HookScript("OnShow", function(self)
+      if locaDebuffs.db and locaDebuffs.db.hideBlizzardFrame then
+        self:SetAlpha(0)
+        if self.EnableMouse then
+          self:EnableMouse(false)
+        end
+      end
+    end)
+  end
+
+  if locaDebuffs.db and locaDebuffs.db.hideBlizzardFrame then
+    blizzFrame:SetAlpha(0)
+    if blizzFrame.EnableMouse then
+      blizzFrame:EnableMouse(false)
+    end
+  else
+    blizzFrame:SetAlpha(1)
+    if blizzFrame.EnableMouse then
+      blizzFrame:EnableMouse(true)
+    end
+  end
+end
+
 function locaDebuffs:UpdateContainer()
   local mult = activeScaleOverride or 1
   container:SetScale((locaDebuffs.db.scale or 1) * mult)
   container:SetAlpha(locaDebuffs.db.alpha)
+  locaDebuffs:UpdateBlizzardFrameVisibility()
 
   if locaDebuffs.db.showSecondsLabel then
     iconFrame.secondsText:Show()
