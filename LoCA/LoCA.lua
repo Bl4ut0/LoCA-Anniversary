@@ -111,6 +111,7 @@ addon.options = {
       get = function(info) return addon.db.profile.debuffs.mode end,
       set = function(info, val)
         addon.db.profile.debuffs.mode = val
+        addon.db.profile.debuffs.userSelectedMode = true
         addon:OnUpdateSettings()
       end,
     },
@@ -165,6 +166,9 @@ function addon:OnInitialize()
   end
 
   addon.db = LibStub("AceDB-3.0"):New(addonName .. "DB", addon.defaultSettings, true)
+  if hasRetailLoC and WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE and not addon.db.profile.debuffs.userSelectedMode then
+    addon.db.profile.debuffs.mode = "retail"
+  end
   addon.options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(addon.db)
 
   debuffs:OnInitialize(addon.db.profile["debuffs"])

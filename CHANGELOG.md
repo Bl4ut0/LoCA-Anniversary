@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.33] - 2026-11-21
+### Fixed
+- **Secret Aura Guard (`GetDebuffDataByIndex`)**: Guarded `C_UnitAuras.GetDebuffDataByIndex` with `C_Secrets.ShouldAurasBeSecret()` and `pcall` in `OnDebuffsChanged` so Forever/Midnight clients never throw `Auras cannot be accessed when secret` in `custom` mode.
+- **Forever Profile Mode Migration**: Automatically migrates existing Forever profiles from the previously forced `"custom"` mode to `"retail"` (`C_LossOfControl`) unless the user explicitly chose a mode (`userSelectedMode`).
+
 ## [1.32] - 2026-11-21
 ### Fixed
 - **WoW Forever / Midnight `ADDON_ACTION_FORBIDDEN`**: Stopped registering `COMBAT_LOG_EVENT_UNFILTERED` on clients with `issecretvalue` (WoW Forever `1.60.1` and Retail `12.x`), eliminating the `ADDON_ACTION_FORBIDDEN` error on login/reload.

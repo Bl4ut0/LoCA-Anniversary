@@ -516,10 +516,13 @@ function locaDebuffs:OnDebuffsChanged()
 
   -- Use C_UnitAuras if available (Modern/Anniversary Client), otherwise fallback to UnitDebuff
   if C_UnitAuras and C_UnitAuras.GetDebuffDataByIndex then
-    for i = 1, 40 do
-      local aura = C_UnitAuras.GetDebuffDataByIndex("player", i)
-      if not aura then break end
-      evaluateAura(aura.name, aura.icon, aura.expirationTime, aura.spellId)
+    local aurasSecret = C_Secrets and C_Secrets.ShouldAurasBeSecret and C_Secrets.ShouldAurasBeSecret()
+    if not aurasSecret then
+      for i = 1, 40 do
+        local ok, aura = pcall(C_UnitAuras.GetDebuffDataByIndex, "player", i)
+        if not ok or not aura then break end
+        evaluateAura(aura.name, aura.icon, aura.expirationTime, aura.spellId)
+      end
     end
   elseif UnitDebuff then
     -- Legacy / Fallback
