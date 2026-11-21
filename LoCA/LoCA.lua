@@ -129,7 +129,10 @@ function addon:OnUpdateSettings()
     addon.eventHandler:RegisterEvent("LOSS_OF_CONTROL_ADDED")
     addon.eventHandler:RegisterEvent("LOSS_OF_CONTROL_UPDATE")
     addon.eventHandler:UnregisterEvent("UNIT_AURA")
-    pcall(addon.eventHandler.UnregisterEvent, addon.eventHandler, "COMBAT_LOG_EVENT_UNFILTERED")
+    if addon.registeredCLEU then
+      pcall(addon.eventHandler.UnregisterEvent, addon.eventHandler, "COMBAT_LOG_EVENT_UNFILTERED")
+      addon.registeredCLEU = false
+    end
 
     local data = C_LossOfControl and C_LossOfControl.GetActiveLossOfControlData and C_LossOfControl.GetActiveLossOfControlData(1)
     debuffs:OnLossOfControlUpdate(data)
@@ -137,7 +140,11 @@ function addon:OnUpdateSettings()
     addon.eventHandler:UnregisterEvent("LOSS_OF_CONTROL_ADDED")
     addon.eventHandler:UnregisterEvent("LOSS_OF_CONTROL_UPDATE")
     addon.eventHandler:RegisterEvent("UNIT_AURA")
-    pcall(addon.eventHandler.RegisterEvent, addon.eventHandler, "COMBAT_LOG_EVENT_UNFILTERED")
+    -- COMBAT_LOG_EVENT_UNFILTERED is restricted (ADDON_ACTION_FORBIDDEN) on Midnight/Forever clients (where issecretvalue exists)
+    if not _G.issecretvalue and not addon.registeredCLEU then
+      local ok = pcall(addon.eventHandler.RegisterEvent, addon.eventHandler, "COMBAT_LOG_EVENT_UNFILTERED")
+      addon.registeredCLEU = ok
+    end
 
     addon:OnAuraEvent("player")
   end
@@ -148,8 +155,9 @@ end
 function addon:OnInitialize()
   addon.eventHandler:RegisterEvent("PLAYER_ENTERING_WORLD")
 
-  -- Detect Classic/TBC and force custom mode
-  if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
+  -- Detect Classic/TBC without C_LossOfControl and force custom mode
+  local hasRetailLoC = C_LossOfControl and C_LossOfControl.GetActiveLossOfControlData ~= nil
+  if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE and not hasRetailLoC then
     addon.defaultSettings.profile.debuffs.mode = "custom"
     -- Hide/Disable the mode selector in options since Retail mode won't work
     addon.options.args.mode.disabled = true

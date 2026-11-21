@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.32] - 2026-11-21
+### Fixed
+- **WoW Forever / Midnight `ADDON_ACTION_FORBIDDEN`**: Stopped registering `COMBAT_LOG_EVENT_UNFILTERED` on clients with `issecretvalue` (WoW Forever `1.60.1` and Retail `12.x`), eliminating the `ADDON_ACTION_FORBIDDEN` error on login/reload.
+- **Native `C_LossOfControl` on Forever**: Enabled `retail` mode (`C_LossOfControl`) on non-Mainline clients that provide `C_LossOfControl.GetActiveLossOfControlData` (such as WoW Forever), so school lockouts and Loss of Control events work natively without needing `COMBAT_LOG_EVENT_UNFILTERED`.
+- **Combat-Safe Blizzard Frame Hiding**: Removed `EnableMouse` mutation on `LossOfControlFrame` in `UpdateBlizzardFrameVisibility()` so hiding the built-in frame only uses `SetAlpha(0)`.
+
 ## [1.31] - 2026-11-20
 ### Added
 - **Hide Blizzard Default Frame**: Added a `Hide Blizzard Default Frame` toggle under `/loca` -> `Debuffs` (visible on Retail and WoW Forever where `LossOfControlFrame` exists) to hide Blizzard's built-in Loss of Control frame in a taint-safe way (`SetAlpha(0)` + `EnableMouse(false)`) while keeping `C_LossOfControl` events active for LoCA.

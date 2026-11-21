@@ -668,23 +668,14 @@ function locaDebuffs:UpdateBlizzardFrameVisibility()
     blizzFrame:HookScript("OnShow", function(self)
       if locaDebuffs.db and locaDebuffs.db.hideBlizzardFrame then
         self:SetAlpha(0)
-        if self.EnableMouse then
-          self:EnableMouse(false)
-        end
       end
     end)
   end
 
   if locaDebuffs.db and locaDebuffs.db.hideBlizzardFrame then
     blizzFrame:SetAlpha(0)
-    if blizzFrame.EnableMouse then
-      blizzFrame:EnableMouse(false)
-    end
   else
     blizzFrame:SetAlpha(1)
-    if blizzFrame.EnableMouse then
-      blizzFrame:EnableMouse(true)
-    end
   end
 end
 
